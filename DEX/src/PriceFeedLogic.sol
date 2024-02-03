@@ -7,51 +7,48 @@ import "./interfaces/ICPMM.sol";
 import "./interfaces/IPriceFeed.sol";
 
 library PriceFeedLogic {
-    uint256 public immutable PRICE_PRECISION = 1e30;
-    address public immutable DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    address public immutable USDT = 0x6B175474E89094C44Da98b254EedeAC495271d0F;
+    uint256 public constant PRICE_PRECISION = 1e30;
+    uint256 public constant ONE_USD = PRICE_PRECISION;
+    struct PriceFeedData {
+        address priceFeed;
+        address addressResolver;
+        address weth;
+        address dai;
+    }
 
-    function getPrice(address _token, bool _maximise, bool _includeAmmPrice) public view returns (uint256) {
-        uint256 price = getPrimaryPrice(_token, _maximise);
-        price = getAmmPrice(_token, _maximise, price);
-
-        if (IPoolStorage(poolStorage).strictStableTokens(_token)) {
-            uint256 delta = price > ONE_USD ? price.sub(ONE_USD) : ONE_USD.sub(price);
-            if (delta <= maxStrictPriceDeviation) {
-                return ONE_USD;
-            }
-
-            // if _maximise and price is e.g. 1.02, return 1.02
-            if (_maximise && price > ONE_USD) {
-                return price;
-            }
-
-            // if !_maximise and price is e.g. 0.98, return 0.98
-            if (!_maximise && price < ONE_USD) {
-                return price;
-            }
-
-            return ONE_USD;
-        }
-
+    function getPrice(PriceFeedData storage self, address _token, bool _maximise) public view returns (uint256) {
+        uint256 price = getPrimaryPrice(self, _token);
+        price = getAmmPrice(self, _token, _maximise, price);
         return price;
     }
 
-    function getPrimaryPrice(address _token, bool _maximise) public view returns (uint256) {
-        require(priceFeedAddress != address(0), "PriceFeed: invalid price feed");
+    function getPrimaryPrice(PriceFeedData storage self, address _token) public view returns (uint256) {
+        address priceFeed = self.priceFeed;
+        require(priceFeed != address(0), "PriceFeed: invalid price feed");
         require(IPriceFeed(priceFeed).healthCheck(), "PriceFeed: Price feeds are not being updated");
         return IPriceFeed(priceFeed).getAssetPrice(_token);
     }
 
-    function getAmmPrice(address _token) public override view returns (uint256) {
-        uint256 eth = getEthPrice(WETH);
-        uint256 tokenPrice = getPairPrice(_token);
-        return tokenPrice * eth / PRICE_PRECISION;
+    function getAmmPrice(PriceFeedData storage self, address _token, bool _maximise, uint256 _price) public view returns (uint256) {
+        uint256 ethDai = getEthPrice(self);
+        uint256 tokenEth = getPairPrice(self, _token);
+        uint256 ammPrice = ethDai * tokenEth / PRICE_PRECISION;
+        if (_maximise && ammPrice > _price) {
+            return ammPrice;
+        } 
+        
+        if (!_maximise && ammPrice < _price) {
+            return _price;
+        }
+
+        return _price;
     }
 
-    function getEthPrice(address _addressResolver) public view returns (uint256) {
-        (address token0, addresstoken1) = WETH < DAI ? (WETH, DAI) : (DAI, WETH);
-        address pair = IFactory(IAddressResolver(_addressResolver).factory()).getPair(token0, token1);
+    function getEthPrice(PriceFeedData storage self) public view returns (uint256) {
+        address weth = self.weth;
+        address dai = self.dai;
+        (address token0, address token1) = weth < dai ? (weth, dai) : (dai, weth);
+        address pair = IFactory(IAddressResolver(self.addressResolver).factory()).getPair(token0, token1);
 
         if (pair == address(0)) {
             revert("GetPairPrice: no pair on AMM");
@@ -59,29 +56,27 @@ library PriceFeedLogic {
 
         (uint256 reserve0, uint256 reserve1, ) = ICPMM(pair).getReserves();
         if (reserve0 == 0) { return 0; }
-        if (token0 == DAI) {
+        if (token0 == dai) {
             return reserve1 * PRICE_PRECISION / reserve0;
         } else {
             return reserve0 * PRICE_PRECISION / reserve1;
         }
-        return 0;
     }
 
-    function getPairPrice(address _addressResolver, address _token) public view returns (uint256) {
-        (address token0, address token1) = _token < WETH ? (_token, WETH) : (WETH, _token);
-        address pair = IFactory(IAddressResolver(_addressResolver).factory()).getPair(token0, token1);
+    function getPairPrice(PriceFeedData storage self, address _token) public view returns (uint256) {
+        address weth = self.weth;
+        (address token0, address token1) = _token < weth ? (_token, weth) : (weth, _token);
+        address pair = IFactory(IAddressResolver(self.addressResolver).factory()).getPair(token0, token1);
         if (pair == address(0)) {
             revert("GetPairPrice: no pair on AMM");
         }
 
         (uint256 reserve0, uint256 reserve1, ) = ICPMM(pair).getReserves();
         if (reserve0 == 0) { return 0; }
-        if (token0 == DAI) {
+        if (token0 == weth) {
             return reserve1 * PRICE_PRECISION / reserve0;
         } else {
             return reserve0 * PRICE_PRECISION / reserve1;
         }
-        return 0;
     }
-
 }
