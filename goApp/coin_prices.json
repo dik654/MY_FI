@@ -1,0 +1,804 @@
+{
+  "data": [
+    {
+      "symbol": "BTC",
+      "quote": {
+        "USD": {
+          "price": 42804.07772143387
+        }
+      }
+    },
+    {
+      "symbol": "ETH",
+      "quote": {
+        "USD": {
+          "price": 2290.26634270528
+        }
+      }
+    },
+    {
+      "symbol": "USDT",
+      "quote": {
+        "USD": {
+          "price": 0.9997219086277922
+        }
+      }
+    },
+    {
+      "symbol": "BNB",
+      "quote": {
+        "USD": {
+          "price": 299.55492046785906
+        }
+      }
+    },
+    {
+      "symbol": "SOL",
+      "quote": {
+        "USD": {
+          "price": 96.59657452024837
+        }
+      }
+    },
+    {
+      "symbol": "XRP",
+      "quote": {
+        "USD": {
+          "price": 0.5106567256376346
+        }
+      }
+    },
+    {
+      "symbol": "USDC",
+      "quote": {
+        "USD": {
+          "price": 1.0001403606750399
+        }
+      }
+    },
+    {
+      "symbol": "ADA",
+      "quote": {
+        "USD": {
+          "price": 0.5039365292485017
+        }
+      }
+    },
+    {
+      "symbol": "AVAX",
+      "quote": {
+        "USD": {
+          "price": 35.57073032961033
+        }
+      }
+    },
+    {
+      "symbol": "DOGE",
+      "quote": {
+        "USD": {
+          "price": 0.0785765984289236
+        }
+      }
+    },
+    {
+      "symbol": "LINK",
+      "quote": {
+        "USD": {
+          "price": 17.70717268943512
+        }
+      }
+    },
+    {
+      "symbol": "TRX",
+      "quote": {
+        "USD": {
+          "price": 0.1171408570766138
+        }
+      }
+    },
+    {
+      "symbol": "DOT",
+      "quote": {
+        "USD": {
+          "price": 6.741739166822077
+        }
+      }
+    },
+    {
+      "symbol": "MATIC",
+      "quote": {
+        "USD": {
+          "price": 0.7731055632992646
+        }
+      }
+    },
+    {
+      "symbol": "TON",
+      "quote": {
+        "USD": {
+          "price": 2.0297175669916108
+        }
+      }
+    },
+    {
+      "symbol": "ICP",
+      "quote": {
+        "USD": {
+          "price": 12.676525785707856
+        }
+      }
+    },
+    {
+      "symbol": "DAI",
+      "quote": {
+        "USD": {
+          "price": 1.0000572199895092
+        }
+      }
+    },
+    {
+      "symbol": "SHIB",
+      "quote": {
+        "USD": {
+          "price": 0.000009031556717980452
+        }
+      }
+    },
+    {
+      "symbol": "LTC",
+      "quote": {
+        "USD": {
+          "price": 67.73968811591031
+        }
+      }
+    },
+    {
+      "symbol": "BCH",
+      "quote": {
+        "USD": {
+          "price": 240.9233585806555
+        }
+      }
+    },
+    {
+      "symbol": "LEO",
+      "quote": {
+        "USD": {
+          "price": 4.027617759461615
+        }
+      }
+    },
+    {
+      "symbol": "ETC",
+      "quote": {
+        "USD": {
+          "price": 25.121657727908744
+        }
+      }
+    },
+    {
+      "symbol": "UNI",
+      "quote": {
+        "USD": {
+          "price": 6.042147187295615
+        }
+      }
+    },
+    {
+      "symbol": "ATOM",
+      "quote": {
+        "USD": {
+          "price": 9.020452292310992
+        }
+      }
+    },
+    {
+      "symbol": "XLM",
+      "quote": {
+        "USD": {
+          "price": 0.10964964562677358
+        }
+      }
+    },
+    {
+      "symbol": "XMR",
+      "quote": {
+        "USD": {
+          "price": 165.8476237282325
+        }
+      }
+    },
+    {
+      "symbol": "APT",
+      "quote": {
+        "USD": {
+          "price": 8.92614220644174
+        }
+      }
+    },
+    {
+      "symbol": "INJ",
+      "quote": {
+        "USD": {
+          "price": 32.804312953294776
+        }
+      }
+    },
+    {
+      "symbol": "OKB",
+      "quote": {
+        "USD": {
+          "price": 48.12881029015686
+        }
+      }
+    },
+    {
+      "symbol": "IMX",
+      "quote": {
+        "USD": {
+          "price": 2.1219903167897254
+        }
+      }
+    },
+    {
+      "symbol": "NEAR",
+      "quote": {
+        "USD": {
+          "price": 2.7737195751890535
+        }
+      }
+    },
+    {
+      "symbol": "OP",
+      "quote": {
+        "USD": {
+          "price": 2.938520019897334
+        }
+      }
+    },
+    {
+      "symbol": "TIA",
+      "quote": {
+        "USD": {
+          "price": 17.047050282836505
+        }
+      }
+    },
+    {
+      "symbol": "FDUSD",
+      "quote": {
+        "USD": {
+          "price": 0.9997380259383565
+        }
+      }
+    },
+    {
+      "symbol": "FIL",
+      "quote": {
+        "USD": {
+          "price": 5.002986989912865
+        }
+      }
+    },
+    {
+      "symbol": "LDO",
+      "quote": {
+        "USD": {
+          "price": 2.732830221114933
+        }
+      }
+    },
+    {
+      "symbol": "HBAR",
+      "quote": {
+        "USD": {
+          "price": 0.06842026989591775
+        }
+      }
+    },
+    {
+      "symbol": "KAS",
+      "quote": {
+        "USD": {
+          "price": 0.10074177563220799
+        }
+      }
+    },
+    {
+      "symbol": "ARB",
+      "quote": {
+        "USD": {
+          "price": 1.7498314802575687
+        }
+      }
+    },
+    {
+      "symbol": "STX",
+      "quote": {
+        "USD": {
+          "price": 1.478289466763768
+        }
+      }
+    },
+    {
+      "symbol": "CRO",
+      "quote": {
+        "USD": {
+          "price": 0.08091319149708877
+        }
+      }
+    },
+    {
+      "symbol": "VET",
+      "quote": {
+        "USD": {
+          "price": 0.028105895410472027
+        }
+      }
+    },
+    {
+      "symbol": "MNT",
+      "quote": {
+        "USD": {
+          "price": 0.5866102683717902
+        }
+      }
+    },
+    {
+      "symbol": "MKR",
+      "quote": {
+        "USD": {
+          "price": 2009.654321782536
+        }
+      }
+    },
+    {
+      "symbol": "RNDR",
+      "quote": {
+        "USD": {
+          "price": 4.821007831252224
+        }
+      }
+    },
+    {
+      "symbol": "SUI",
+      "quote": {
+        "USD": {
+          "price": 1.4813429547259653
+        }
+      }
+    },
+    {
+      "symbol": "SEI",
+      "quote": {
+        "USD": {
+          "price": 0.6153492782081235
+        }
+      }
+    },
+    {
+      "symbol": "RUNE",
+      "quote": {
+        "USD": {
+          "price": 4.329656748216401
+        }
+      }
+    },
+    {
+      "symbol": "TUSD",
+      "quote": {
+        "USD": {
+          "price": 0.9859570009839759
+        }
+      }
+    },
+    {
+      "symbol": "GRT",
+      "quote": {
+        "USD": {
+          "price": 0.15435311318519584
+        }
+      }
+    },
+    {
+      "symbol": "BSV",
+      "quote": {
+        "USD": {
+          "price": 71.86700163079091
+        }
+      }
+    },
+    {
+      "symbol": "EGLD",
+      "quote": {
+        "USD": {
+          "price": 53.04385050604339
+        }
+      }
+    },
+    {
+      "symbol": "ALGO",
+      "quote": {
+        "USD": {
+          "price": 0.16104933452593664
+        }
+      }
+    },
+    {
+      "symbol": "MINA",
+      "quote": {
+        "USD": {
+          "price": 1.1904647122631913
+        }
+      }
+    },
+    {
+      "symbol": "AAVE",
+      "quote": {
+        "USD": {
+          "price": 84.44218294166586
+        }
+      }
+    },
+    {
+      "symbol": "QNT",
+      "quote": {
+        "USD": {
+          "price": 101.29718736350434
+        }
+      }
+    },
+    {
+      "symbol": "HNT",
+      "quote": {
+        "USD": {
+          "price": 7.217494494941425
+        }
+      }
+    },
+    {
+      "symbol": "ORDI",
+      "quote": {
+        "USD": {
+          "price": 52.13966208786893
+        }
+      }
+    },
+    {
+      "symbol": "FLOW",
+      "quote": {
+        "USD": {
+          "price": 0.7276345692243901
+        }
+      }
+    },
+    {
+      "symbol": "ASTR",
+      "quote": {
+        "USD": {
+          "price": 0.18152407708955706
+        }
+      }
+    },
+    {
+      "symbol": "FTM",
+      "quote": {
+        "USD": {
+          "price": 0.3469368341105975
+        }
+      }
+    },
+    {
+      "symbol": "THETA",
+      "quote": {
+        "USD": {
+          "price": 0.9692546788608833
+        }
+      }
+    },
+    {
+      "symbol": "SAND",
+      "quote": {
+        "USD": {
+          "price": 0.432868689613441
+        }
+      }
+    },
+    {
+      "symbol": "AXS",
+      "quote": {
+        "USD": {
+          "price": 7.003413353933942
+        }
+      }
+    },
+    {
+      "symbol": "KCS",
+      "quote": {
+        "USD": {
+          "price": 9.867156643673736
+        }
+      }
+    },
+    {
+      "symbol": "XTZ",
+      "quote": {
+        "USD": {
+          "price": 0.9770663660069889
+        }
+      }
+    },
+    {
+      "symbol": "SNX",
+      "quote": {
+        "USD": {
+          "price": 3.0728732073350806
+        }
+      }
+    },
+    {
+      "symbol": "FLR",
+      "quote": {
+        "USD": {
+          "price": 0.02837673990543748
+        }
+      }
+    },
+    {
+      "symbol": "CHZ",
+      "quote": {
+        "USD": {
+          "price": 0.10219294853781302
+        }
+      }
+    },
+    {
+      "symbol": "RON",
+      "quote": {
+        "USD": {
+          "price": 3.0163744023142027
+        }
+      }
+    },
+    {
+      "symbol": "BGB",
+      "quote": {
+        "USD": {
+          "price": 0.6305529892074526
+        }
+      }
+    },
+    {
+      "symbol": "BEAM",
+      "quote": {
+        "USD": {
+          "price": 0.01684509995740183
+        }
+      }
+    },
+    {
+      "symbol": "1000SATS",
+      "quote": {
+        "USD": {
+          "price": 0.0004101131562015343
+        }
+      }
+    },
+    {
+      "symbol": "WEMIX",
+      "quote": {
+        "USD": {
+          "price": 2.350123825510184
+        }
+      }
+    },
+    {
+      "symbol": "MANA",
+      "quote": {
+        "USD": {
+          "price": 0.43327622095322277
+        }
+      }
+    },
+    {
+      "symbol": "ETHDYDX",
+      "quote": {
+        "USD": {
+          "price": 2.646643858265934
+        }
+      }
+    },
+    {
+      "symbol": "ROSE",
+      "quote": {
+        "USD": {
+          "price": 0.1175800015448011
+        }
+      }
+    },
+    {
+      "symbol": "EOS",
+      "quote": {
+        "USD": {
+          "price": 0.7028601637907653
+        }
+      }
+    },
+    {
+      "symbol": "BTT",
+      "quote": {
+        "USD": {
+          "price": 8.035839696523669e-7
+        }
+      }
+    },
+    {
+      "symbol": "NEO",
+      "quote": {
+        "USD": {
+          "price": 10.98844405772411
+        }
+      }
+    },
+    {
+      "symbol": "FXS",
+      "quote": {
+        "USD": {
+          "price": 10.100231948669403
+        }
+      }
+    },
+    {
+      "symbol": "OSMO",
+      "quote": {
+        "USD": {
+          "price": 1.5675189217129326
+        }
+      }
+    },
+    {
+      "symbol": "CFX",
+      "quote": {
+        "USD": {
+          "price": 0.20849553339538612
+        }
+      }
+    },
+    {
+      "symbol": "IOTA",
+      "quote": {
+        "USD": {
+          "price": 0.24222192552711558
+        }
+      }
+    },
+    {
+      "symbol": "KAVA",
+      "quote": {
+        "USD": {
+          "price": 0.6911906341598402
+        }
+      }
+    },
+    {
+      "symbol": "PYTH",
+      "quote": {
+        "USD": {
+          "price": 0.49503352436443754
+        }
+      }
+    },
+    {
+      "symbol": "BLUR",
+      "quote": {
+        "USD": {
+          "price": 0.5717106870193704
+        }
+      }
+    },
+    {
+      "symbol": "JUP",
+      "quote": {
+        "USD": {
+          "price": 0.544426367655371
+        }
+      }
+    },
+    {
+      "symbol": "USDD",
+      "quote": {
+        "USD": {
+          "price": 0.993484490660192
+        }
+      }
+    },
+    {
+      "symbol": "MANTA",
+      "quote": {
+        "USD": {
+          "price": 2.694354904944622
+        }
+      }
+    },
+    {
+      "symbol": "KLAY",
+      "quote": {
+        "USD": {
+          "price": 0.19122329638235658
+        }
+      }
+    },
+    {
+      "symbol": "PENDLE",
+      "quote": {
+        "USD": {
+          "price": 2.790358861433092
+        }
+      }
+    },
+    {
+      "symbol": "BONK",
+      "quote": {
+        "USD": {
+          "price": 0.000010174483134942393
+        }
+      }
+    },
+    {
+      "symbol": "AKT",
+      "quote": {
+        "USD": {
+          "price": 2.7364092529945165
+        }
+      }
+    },
+    {
+      "symbol": "WOO",
+      "quote": {
+        "USD": {
+          "price": 0.3401433448518031
+        }
+      }
+    },
+    {
+      "symbol": "CAKE",
+      "quote": {
+        "USD": {
+          "price": 2.413067871547295
+        }
+      }
+    },
+    {
+      "symbol": "LUNC",
+      "quote": {
+        "USD": {
+          "price": 0.00010354355186564664
+        }
+      }
+    },
+    {
+      "symbol": "XDC",
+      "quote": {
+        "USD": {
+          "price": 0.04317067924877841
+        }
+      }
+    },
+    {
+      "symbol": "GALA",
+      "quote": {
+        "USD": {
+          "price": 0.021403026360704232
+        }
+      }
+    },
+    {
+      "symbol": "XEC",
+      "quote": {
+        "USD": {
+          "price": 0.000030218872412640662
+        }
+      }
+    }
+  ]
+}

@@ -18,6 +18,6 @@ contract PriceFeed is IPriceFeed {
   }
 
   function healthCheck() external view returns (bool) {
-    return block.timestamp < lastUpdate + 1 hours;
+    return block.timestamp < lastUpdate + 3 minutes;
   }
 }
