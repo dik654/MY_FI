@@ -1,14 +1,20 @@
 package main
 
 import (
+	"crypto/ecdsa"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
+
+	priceFeed "github.com/dik654/MY_FI/goApp/contracts" // for demo
 )
 
-// CoinMarketCap API URL 및 API 키
-const baseURL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
+// const baseURL = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest"
 
 type ApiResponse struct {
 	Data []struct {
@@ -49,6 +55,10 @@ func LoadDataFromFile(filename string) ApiResponse {
 }
 
 func main() {
+	client, err := ethclient.Dial("https://rinkeby.infura.io")
+	if err != nil {
+		log.Fatal(err)
+	}
 	// err := godotenv.Load()
 	// if err != nil {
 	// 	log.Fatal("Error loading .env file")
@@ -105,4 +115,28 @@ func main() {
 	for _, coin := range data.Data {
 		fmt.Printf("Symbol: %s, Price: $%f\n", coin.Symbol, coin.Quote.USD.Price)
 	}
+
+	privateKey, err := crypto.HexToECDSA("fad9c8855b740a0b7ed4c221dbad0f33a83a49cad6b3fe8d5817ac83d38b6a19")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	publicKey := privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		log.Fatal("error casting public key to ECDSA")
+	}
+
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+	fmt.Println(fromAddress)
+
+	contractAddress := "0xYourContractAddress"
+
+	instance, err := priceFeed.NewPriceFeed(common.HexToAddress(contractAddress), client)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("contract is loaded")
+	_ = instance
 }
