@@ -2,6 +2,7 @@
 pragma solidity ^0.8.19;
 
 import '../interfaces/ICPMM.sol';
+import '../CPMM.sol';
 
 library CPMMLibrary {
     function sortTokens(address tokenA, address tokenB) internal pure returns (address token0, address token1) {
@@ -16,8 +17,13 @@ library CPMMLibrary {
                 hex'ff',
                 factory,
                 keccak256(abi.encodePacked(token0, token1)),
-                hex'96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f' // init code hash
+                getInitHash()
             )))));
+    }
+
+    function getInitHash() public pure returns(bytes32){
+        bytes memory bytecode = type(CPMM).creationCode;
+        return keccak256(abi.encodePacked(bytecode));
     }
 
     function getReserves(address factory, address tokenA, address tokenB) internal view returns (uint reserveA, uint reserveB) {

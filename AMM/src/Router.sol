@@ -8,16 +8,14 @@ import "./libraries/CPMMLibrary.sol";
 
 contract Router is IRouter {
     address public immutable override factory;
-    address public immutable override WETH;    
 
     modifier ensure(uint256 deadline) {
-        require(deadline >= block.timestamp, 'UniswapV2Router: EXPIRED');
+        require(deadline >= block.timestamp, 'ROUTER: EXPIRED');
         _;
     }
 
-    constructor(address _factory, address _WETH) {
+    constructor(address _factory) {
         factory = _factory;
-        WETH = _WETH;
     }
 
     function addLiquidity(
@@ -102,6 +100,27 @@ contract Router is IRouter {
             address to = i < path.length - 2 ? CPMMLibrary.pairFor(factory, output, path[i + 2]) : _to;
             ICPMM(CPMMLibrary.pairFor(factory, input, output)).swap(amount0Out, amount1Out, to, new bytes(0));
         }
+    }
+
+    function getQuote(uint256 _amountA, uint256 _amountB, address _tokenA, address _tokenB) public view returns (address token0, address token1, uint256 optimal0, uint256 optimal1) {
+        address pair = CPMMLibrary.pairFor(factory, _tokenA, _tokenB);
+        uint256 amount0;
+        uint256 amount1;
+
+        if (_tokenA < _tokenB) {
+            token0 = _tokenA;
+            token1 = _tokenB;
+            amount0 = _amountA;
+            amount1 = _amountB;
+        } else {
+            token0 = _tokenB;
+            token1 = _tokenA;
+            amount0 = _amountB;
+            amount1 = _amountA;
+        }
+        (uint112 reserve0, uint112 reserve1, )= ICPMM(pair).getReserves();
+        optimal0 = quote(amount1, uint256(reserve1), uint256(reserve0));
+        optimal1 = quote(amount0, uint256(reserve0), uint256(reserve1));
     }
 
     function quote(uint256 amountA, uint256 reserveA, uint256 reserveB) public pure override returns (uint amountB) {
