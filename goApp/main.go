@@ -12,6 +12,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/joho/godotenv"
 
 	priceFeed "github.com/dik654/MY_FI/goApp/contracts" // for demo
 )
@@ -61,7 +62,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// err := godotenv.Load()
+	err = godotenv.Load()
 	// if err != nil {
 	// 	log.Fatal("Error loading .env file")
 	// }
@@ -112,9 +113,18 @@ func main() {
 
 	// // 데이터를 파일로 저장
 	// SaveDataToFile(data, "coin_prices.json")
+	var btcPrice int64
+	var ethPrice int64
 
 	data := LoadDataFromFile("coin_prices.json")
 	for _, coin := range data.Data {
+		if coin.Symbol == "BTC" {
+			btcPrice = int64(coin.Quote.USD.Price * 10e6)
+		}
+
+		if coin.Symbol == "ETH" {
+			ethPrice = int64(coin.Quote.USD.Price * 10e6)
+		}
 		fmt.Printf("Symbol: %s, Price: $%f\n", coin.Symbol, coin.Quote.USD.Price)
 	}
 
@@ -132,14 +142,14 @@ func main() {
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 	fmt.Println(fromAddress)
 
-	contractAddress := "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
+	priceFeedAddress := os.Getenv("PRICE_FEED_CONTRACT")
 
-	instance, err := priceFeed.NewPriceFeed(common.HexToAddress(contractAddress), client)
+	instance, err := priceFeed.NewPriceFeed(common.HexToAddress(priceFeedAddress), client)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	price := big.NewInt(135600)
+	// price := big.NewInt(135600)
 
 	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(31337))
 	if err != nil {
@@ -148,10 +158,19 @@ func main() {
 	auth.GasLimit = uint64(30000000)
 	auth.GasPrice = big.NewInt(1000000000)
 
-	tx, err := instance.SetAssetPrice(auth, common.HexToAddress("0x70997970C51812dc3A010C7d01b50e0d17dc79C8"), price)
-	fmt.Println(tx.To().Hex())
+	_, err = instance.SetAssetPrice(auth, common.HexToAddress(os.Getenv("WBTC")), big.NewInt(btcPrice))
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	fmt.Println("SET WBTC PRICE: ", btcPrice)
 
-	assetPrice, _ := instance.GetAssetPrice(nil, common.HexToAddress("0x70997970C51812dc3A010C7d01b50e0d17dc79C8"))
+	_, err = instance.SetAssetPrice(auth, common.HexToAddress(os.Getenv("WETH")), big.NewInt(ethPrice))
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	fmt.Println("SET WETH PRICE: ", ethPrice)
+
+	assetPrice, _ := instance.GetAssetPrice(nil, common.HexToAddress(os.Getenv("WBTC")))
 	fmt.Println(assetPrice)
 
 	liveness, err := instance.HealthCheck(nil)

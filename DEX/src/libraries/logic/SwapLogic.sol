@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import "../types/DataTypes.sol";
+
 library SwapLogic {
     // function updateCumulativeFundingRate(address _collateralToken, address _indexToken) public {
     //     bool shouldUpdate = vaultUtils.updateCumulativeFundingRate(_collateralToken, _indexToken);
