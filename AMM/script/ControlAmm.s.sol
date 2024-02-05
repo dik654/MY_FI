@@ -39,8 +39,9 @@ contract ControlAmmScript is Script {
         uint256 approveAmount;
         approveAmount = 20 ether;
         if (daiWethPair.totalSupply() != 0) {
-            (,, uint256 optimal0, uint256 optimal1) = router.getQuote(20 ether, 20 ether, weth, dai);
+            (address token0, address token1, uint256 optimal0, uint256 optimal1) = router.getQuote(20 ether, 20 ether, weth, dai);
             approveAmount = (optimal0 > optimal1) ? optimal1 : optimal0;
+            console2.log(token0, optimal0, token1, optimal1);
         }
         ERC20(dai).approve(address(daiWethPair), approveAmount);
         ERC20(weth).approve(address(daiWethPair), approveAmount);
@@ -52,8 +53,9 @@ contract ControlAmmScript is Script {
         
         approveAmount = 100 ether;
         if (wethWbtcPair.totalSupply() != 0) {
-            (,, uint256 optimal0, uint256 optimal1) = router.getQuote(100 ether, 100 ether, weth, wbtc);
+            (address token0, address token1, uint256 optimal0, uint256 optimal1) = router.getQuote(100 ether, 100 ether, weth, wbtc);
             approveAmount = (optimal0 > optimal1) ? optimal1 : optimal0;
+            console2.log(token0, optimal0, token1, optimal1);
         }
         ERC20(weth).approve(address(wethWbtcPair), approveAmount);
         ERC20(wbtc).approve(address(wethWbtcPair), approveAmount);
