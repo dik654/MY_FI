@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/big"
 	"os"
 
+	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -55,7 +57,7 @@ func LoadDataFromFile(filename string) ApiResponse {
 }
 
 func main() {
-	client, err := ethclient.Dial("https://rinkeby.infura.io")
+	client, err := ethclient.Dial("http://127.0.0.1:8545")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -116,7 +118,7 @@ func main() {
 		fmt.Printf("Symbol: %s, Price: $%f\n", coin.Symbol, coin.Quote.USD.Price)
 	}
 
-	privateKey, err := crypto.HexToECDSA("fad9c8855b740a0b7ed4c221dbad0f33a83a49cad6b3fe8d5817ac83d38b6a19")
+	privateKey, err := crypto.HexToECDSA("ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -130,13 +132,32 @@ func main() {
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 	fmt.Println(fromAddress)
 
-	contractAddress := "0xYourContractAddress"
+	contractAddress := "0xe7f1725e7734ce288f8367e1bb143e90bb3f0512"
 
 	instance, err := priceFeed.NewPriceFeed(common.HexToAddress(contractAddress), client)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("contract is loaded")
-	_ = instance
+	price := big.NewInt(135600)
+
+	auth, err := bind.NewKeyedTransactorWithChainID(privateKey, big.NewInt(31337))
+	if err != nil {
+		log.Fatal(err)
+	}
+	auth.GasLimit = uint64(30000000)
+	auth.GasPrice = big.NewInt(1000000000)
+
+	tx, err := instance.SetAssetPrice(auth, common.HexToAddress("0x70997970C51812dc3A010C7d01b50e0d17dc79C8"), price)
+	fmt.Println(tx.To().Hex())
+
+	assetPrice, _ := instance.GetAssetPrice(nil, common.HexToAddress("0x70997970C51812dc3A010C7d01b50e0d17dc79C8"))
+	fmt.Println(assetPrice)
+
+	liveness, err := instance.HealthCheck(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println(liveness)
 }
