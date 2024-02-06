@@ -79,12 +79,17 @@ contract PriceFeedLogicTest is Test {
         vm.stopPrank();
     }
 
-    function testGetPrimaryPrice() public {
+    function testGetPrice() public {
         setUp();
         TestPriceFeedLogic testPriceFeed = new TestPriceFeedLogic();
         testPriceFeed.initialize(address(priceFeed), address(addressResolver), address(weth), address(dai));
-        console2.log(testPriceFeed.getEthPrice());
-        console2.log(testPriceFeed.getPrimaryPrice(address(wbtc)));
+        uint256 oraclePrice = testPriceFeed.getPrimaryPrice(address(wbtc));
+        uint256 ammPrice = testPriceFeed.getAmmPrice(address(wbtc), true, oraclePrice);
+        if (oraclePrice == ammPrice) {
+            assertEq(oraclePrice, testPriceFeed.getPrice(address(wbtc), true));
+        } else {
+            assertEq(ammPrice, testPriceFeed.getPrice(address(wbtc), true));
+        }
     }
 
 }
