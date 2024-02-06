@@ -27,7 +27,7 @@ library PriceFeedLogic {
         require(priceFeed != address(0), "PriceFeed: invalid price feed");
         require(IPriceFeed(priceFeed).healthCheck(), "PriceFeed: Price feeds are not being updated");
         // coin market cap의 정밀도 6으로 나누기
-        return IPriceFeed(priceFeed).getAssetPrice(_token) * Constants.PRICE_PRECISION / Constants.COIN_MARKET_CAP_PRECISION;
+        return IPriceFeed(priceFeed).getAssetPrice(_token) * (Constants.PRICE_PRECISION / Constants.COIN_MARKET_CAP_PRECISION);
     }
 
     function getAmmPrice(DataTypes.PriceFeedData storage self, address _token, bool _maximise, uint256 _price) internal view returns (uint256) {

@@ -128,7 +128,7 @@ func main() {
 		fmt.Printf("Symbol: %s, Price: $%f\n", coin.Symbol, coin.Quote.USD.Price)
 	}
 
-	privateKey, err := crypto.HexToECDSA("ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+	privateKey, err := crypto.HexToECDSA(os.Getenv("PRIVATE_KEY"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -142,7 +142,7 @@ func main() {
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
 	fmt.Println(fromAddress)
 
-	priceFeedAddress := os.Getenv("PRICE_FEED_CONTRACT")
+	priceFeedAddress := os.Getenv("PRICE_FEED")
 
 	instance, err := priceFeed.NewPriceFeed(common.HexToAddress(priceFeedAddress), client)
 	if err != nil {

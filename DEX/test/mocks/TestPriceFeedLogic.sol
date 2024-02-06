@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "../libraries/types/DataTypes.sol";
-import "../libraries/logic/PriceFeedLogic.sol";
+import "../../src/libraries/types/DataTypes.sol";
+import "../../src/libraries/logic/PriceFeedLogic.sol";
 
 contract TestPriceFeedLogic {
     using PriceFeedLogic for DataTypes.PriceFeedData;

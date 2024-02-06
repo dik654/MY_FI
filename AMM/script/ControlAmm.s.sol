@@ -43,9 +43,9 @@ contract ControlAmmScript is Script {
             approveAmount = (optimal0 > optimal1) ? optimal1 : optimal0;
             console2.log(token0, optimal0, token1, optimal1);
         }
-        ERC20(dai).approve(address(daiWethPair), approveAmount);
-        ERC20(weth).approve(address(daiWethPair), approveAmount);
-        router.addLiquidity(dai, weth, approveAmount, approveAmount, approveAmount * 95/100, approveAmount * 95/100, admin, block.timestamp + 1 minutes);
+        ERC20(dai).approve(address(router), approveAmount);
+        ERC20(weth).approve(address(router), approveAmount);
+        router.addLiquidity(dai, weth, approveAmount, approveAmount, approveAmount * 95/100, approveAmount * 95/100, admin, block.timestamp + 1 hours);
         console2.log("After daiWethPair: ", daiWethPair.totalSupply());
         
         CPMM wethWbtcPair = CPMM(wethWbtc);
@@ -57,9 +57,9 @@ contract ControlAmmScript is Script {
             approveAmount = (optimal0 > optimal1) ? optimal1 : optimal0;
             console2.log(token0, optimal0, token1, optimal1);
         }
-        ERC20(weth).approve(address(wethWbtcPair), approveAmount);
-        ERC20(wbtc).approve(address(wethWbtcPair), approveAmount);
-        router.addLiquidity(weth, wbtc, approveAmount, approveAmount, approveAmount * 95/100, approveAmount * 95/100, admin, block.timestamp + 1 minutes);
+        ERC20(weth).approve(address(router), approveAmount);
+        ERC20(wbtc).approve(address(router), approveAmount);
+        router.addLiquidity(weth, wbtc, approveAmount, approveAmount, approveAmount * 95/100, approveAmount * 95/100, admin, block.timestamp + 1 hours);
         console2.log("After wethWbtcPair: ", wethWbtcPair.totalSupply());
         vm.stopBroadcast();
     }

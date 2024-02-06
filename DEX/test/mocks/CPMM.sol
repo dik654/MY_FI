@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: GLP v3.0
 pragma solidity ^0.8.19;
 
-import './interfaces/ICPMM.sol';
 import "./interfaces/IERC20.sol";
 import './libraries/Math.sol';
 import './libraries/UQ112x112.sol';
 import "./utils/ERC20.sol";
 import "./utils/ReentrancyGuard.sol";
 
-contract CPMM is ReentrancyGuard, ICPMM, ERC20 {
+contract CPMM is ReentrancyGuard, ERC20 {
     using UQ112x112 for uint224;
 
     uint256 public constant MINIMUM_LIQUIDITY = 10**3;
@@ -51,13 +50,12 @@ contract CPMM is ReentrancyGuard, ICPMM, ERC20 {
         reserve0 = uint112(_balance0);
         reserve1 = uint112(_balance1);
         blockTimestampLast = blockTimestamp;
-        emit Sync(reserve0, reserve1);
     }
 
     function mint(address _to, uint256 _amount0, uint256 _amount1) external nonReentrant returns (uint256 liquidity) {
         (uint112 _reserve0, uint112 _reserve1,) = getReserves();
-        IERC20(token0).transfer(address(this), _amount0);
-        IERC20(token1).transfer(address(this), _amount1);
+        IERC20(token0).transferFrom(msg.sender, address(this), _amount0);
+        IERC20(token1).transferFrom(msg.sender, address(this), _amount1);
 
         uint256 _totalSupply = totalSupply();
         if (_totalSupply == 0) {
@@ -70,7 +68,6 @@ contract CPMM is ReentrancyGuard, ICPMM, ERC20 {
         _mint(_to, liquidity);
 
         _update(IERC20(token0).balanceOf(address(this)), IERC20(token1).balanceOf(address(this)), _reserve0, _reserve1);
-        emit Mint(msg.sender, _amount0, _amount1);
     }
 
     function burn(address _to, uint256 amount) external nonReentrant returns (uint256 amount0, uint256 amount1) {
@@ -89,7 +86,6 @@ contract CPMM is ReentrancyGuard, ICPMM, ERC20 {
         IERC20(token0).transfer(_to, amount1);
 
         _update(balance0, balance1, _reserve0, _reserve1);
-        emit Burn(msg.sender, amount0, amount1, _to);
     }
 
     function swap(uint256 _amount0Out, uint256 _amount1Out, address _to, bytes calldata _data) external nonReentrant {
@@ -119,7 +115,6 @@ contract CPMM is ReentrancyGuard, ICPMM, ERC20 {
         }
 
         _update(balance0, balance1, _reserve0, _reserve1);
-        emit Swap(msg.sender, amount0In, amount1In, _amount0Out, _amount1Out, _to);
     }
 
     function skim(address _to) external nonReentrant {
