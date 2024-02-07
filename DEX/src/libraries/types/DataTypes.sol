@@ -8,4 +8,24 @@ library DataTypes {
     address weth;
     address dai;
   }
+
+  struct UserData {
+    mapping(address => uint256) balance;
+  }
+
+  struct TotalData {
+    uint256 txFeePercentage;
+    uint256 totalValue;
+    uint256 maxLimit;
+    uint256 cashReserveRatio;
+    uint256 executionFee;
+  }
+
+  struct ReserveData {
+    PriceFeedData priceFeedData;
+    TotalData totalData;
+    mapping(address => uint256) tokenReserve;
+    mapping(address => address) depositTokenAddress;
+    mapping(address => UserData) userData;
+  }
 }

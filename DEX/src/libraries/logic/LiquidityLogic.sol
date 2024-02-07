@@ -2,48 +2,41 @@
 pragma solidity ^0.8.19;
 
 import "../../interfaces/IERC20.sol";
+import "../../interfaces/IDERC20.sol";
 import "./PriceFeedLogic.sol";
 import "../types/DataTypes.sol";
 
 library LiquidityLogic {
-    struct userData {
-        mapping(address => uint256) balance;
-    }
+    event AddLiquidity(address indexed token, uint256 amount, address to);
+    event RemoveLiquidity(address indexed token, uint256 amount, address to);
 
-    struct reserveData {
-        DataTypes.PriceFeedData priceFeedData;
-        mapping(address => uint256) tokenReserve;
-        mapping(address => uint256) tokenValue;
-        mapping(address => userData) userData;
-        uint256 maxLimit;
-        uint256 minValue;
-        uint256 executionFee;
-    }
-
-
-    function addLiquidity(reserveData storage self, address _token, address _to) internal returns (uint256) {
-        uint256 updatedBalance = IERC20(_token).balanceOf(address(this));
-        uint256 delta = updatedBalance - self.userData[msg.sender].balance[_token];
-        require(delta > 0, "LiquidityLogic: add zero liquidity");
-
-        uint256 price = PriceFeedLogic.getPrice(self.priceFeedData, _token, false);
-        uint256 deltaValue = delta * price;
-        require(deltaValue > self.minValue, "LiquidityLogic: must add more than min usd value"); 
-        require(self.tokenValue[_token] + deltaValue <= self.maxLimit, "LiquidityLogic: exceed maximum reserve limit");
-
-        // executionFee만큼 msg.value로 전송했는지
-        // 남은 나머지는 반환
-
+    function addLiquidity(DataTypes.ReserveData storage self, address _token, uint256 _amount, address _to) internal returns (uint256) {
+    require(_amount > 0, "LiquidityLogic: add zero liquidity");
+        // 토큰 전송
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+        require(self.tokenReserve[_token] + _amount <= self.totalData.maxLimit, "LiquidityLogic: exceed token limit");
         // reserve에 토큰 개수만큼 추가 (totalSupply)
-        // balance에 토큰 개수만큼 추가 (유저의 토큰 balance)
-        // 토큰에 해당하는 Deposit token을 증가(시간이 지남에 따라 증가됨)
+        self.tokenReserve[_token] += _amount;
+
+        uint256 amount = _amount * self.totalData.txFeePercentage;
+        // depositToken 민팅
+        IDERC20(self.depositTokenAddress[_token]).mint(_to, amount);
 
         // 이벤트
+        emit AddLiquidity(_token, amount, _to);
         // deposit token 개수만큼 리턴
+        return amount;
     }
 
-    function removeLiquidity() internal {
+    function removeLiquidity(DataTypes.ReserveData storage self, address _token, uint256 _amount, address _to) internal returns (uint256) {
+        require(_amount > 0, "LiquidityLogic: remove zero liquidity");
+        IDERC20(self.depositTokenAddress[_token]).burn(msg.sender, _amount);
+        uint256 amount = _amount * self.totalData.txFeePercentage;
+        self.tokenReserve[_token] -= amount;
+        
+        IERC20(_token).transfer(_to, amount);
 
+        emit RemoveLiquidity(_token, amount, _to);
+        return amount;
     }
-
 }
