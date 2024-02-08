@@ -17,7 +17,9 @@ library PriceFeedLogic {
     }
     
     function getPrice(DataTypes.PriceFeedData storage self, address _token, bool _maximise) internal view returns (uint256) {
+        // oracle에서 가격 정보 받아오기
         uint256 price = getPrimaryPrice(self, _token);
+        // oracle과 amm 가격 비교하여 제시
         price = getAmmPrice(self, _token, _maximise, price);
         return price;
     }
@@ -25,6 +27,7 @@ library PriceFeedLogic {
     function getPrimaryPrice(DataTypes.PriceFeedData storage self, address _token) internal view returns (uint256) {
         address priceFeed = self.priceFeed;
         require(priceFeed != address(0), "PriceFeed: invalid price feed");
+        // oracle이 최신화되었는지 체크
         require(IPriceFeed(priceFeed).healthCheck(), "PriceFeed: Price feeds are not being updated");
         // coin market cap의 정밀도 6으로 나누기
         return IPriceFeed(priceFeed).getAssetPrice(_token) * (Constants.PRICE_PRECISION / Constants.COIN_MARKET_CAP_PRECISION);
@@ -33,7 +36,9 @@ library PriceFeedLogic {
     function getAmmPrice(DataTypes.PriceFeedData storage self, address _token, bool _maximise, uint256 _price) internal view returns (uint256) {
         uint256 ethDai = getEthPrice(self);
         uint256 tokenEth = getPairPrice(self, _token);
+        // 몇 달러의 가치가 있는지 계산
         uint256 ammPrice = ethDai * tokenEth / Constants.PRICE_PRECISION;
+        // 조건에 맞는 price 제시
         if (_maximise && ammPrice > _price) {
             return ammPrice;
         } 

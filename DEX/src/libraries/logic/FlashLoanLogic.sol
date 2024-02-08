@@ -5,15 +5,15 @@ import "../../interfaces/IERC20.sol";
 import "../../interfaces/IFlashLoanReceiver.sol";
 import "../types/Constants.sol";
 import "../types/DataTypes.sol";
+import "./ValidityLogic.sol";
 
 
 library FlashLoanLogic {
     event ExecuteFlashLoan(address _token, uint256 _amount, address _to, address _contract, bytes _data);
 
     function executeFlashLoan(DataTypes.ReserveData storage self, address _token, uint256 _amount, address _to, address _contract, bytes memory _data) internal {
-        uint256 reserve = self.tokenReserve[_token];
         // reserve에 충분한 자금이 있는지 체크
-        require(reserve - _amount > reserve * self.totalData.cashReserveRatio / 100 );
+        ValidityLogic.validateCashReserveRatio(self, _token, _amount);
         // 컨트랙트인지 검증
         require(_to.code.length != 0, "FlashLoanLogic: Caller is not contract");
         // 인터페이스로 프로토콜에 대한 approve 공격 대비
