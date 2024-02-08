@@ -14,7 +14,8 @@ library DataTypes {
   }
 
   struct TotalData {
-    uint256 txFeePercentage;
+    uint256 flashLoanBP;
+    uint256 txFeeBP;
     uint256 totalValue;
     uint256 maxLimit;
     uint256 cashReserveRatio;
@@ -28,4 +29,5 @@ library DataTypes {
     mapping(address => address) depositTokenAddress;
     mapping(address => UserData) userData;
   }
+
 }
