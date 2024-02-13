@@ -28,6 +28,18 @@ library DataTypes {
     mapping(address => uint256) tokenReserve;
     mapping(address => address) depositTokenAddress;
     mapping(address => UserData) userData;
+    mapping(bytes32 => PositionData) positions;
+  }
+
+
+  struct PositionData {
+    uint256 size;
+    uint256 collateral;
+    uint256 averagePrice;
+    uint256 entryFundingRate;
+    uint256 reserveAmount;
+    int256 realisedPnl;
+    uint256 lastIncreasedTime;
   }
 
 }
