@@ -27,10 +27,13 @@ library DataTypes {
     TotalData totalData;
     mapping(address => uint256) tokenReserve;
     mapping(address => address) depositTokenAddress;
+    mapping(address => uint256) minProfitBasisPoints;
+    mapping(address => uint256) feeReserves;
+    mapping(address => uint256) cumulativeFundingRates;
     mapping(address => UserData) userData;
     mapping(bytes32 => PositionData) positions;
+    TokenPositionData tokenPositionData;
   }
-
 
   struct PositionData {
     uint256 size;
@@ -42,4 +45,9 @@ library DataTypes {
     uint256 lastIncreasedTime;
   }
 
+  struct TokenPositionData {
+    mapping (address => mapping(bool => uint256)) poolAmounts;
+    mapping (address => mapping(bool => uint256)) reservedAmounts;
+    mapping (address => mapping(bool => uint256)) guaranteedUsd;
+  }
 }

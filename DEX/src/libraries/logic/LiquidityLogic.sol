@@ -34,7 +34,7 @@ library LiquidityLogic {
 
     // TODO: 컨트랙트 단에서 슬리피지 amountMin 처리
     function removeLiquidity(DataTypes.ReserveData storage self, address _token, uint256 _amount, address _to) internal returns (uint256) {
-        require(_amount > 0, "LiquidityLogic: remove zero liquidity");
+        require(_amount > 0, "RemoveLiquidity: remove zero liquidity");
         // deposit token 제거
         IDERC20(self.depositTokenAddress[_token]).burn(msg.sender, _amount);
         // 수수료를 제외한 양 계산
@@ -43,9 +43,11 @@ library LiquidityLogic {
         self.tokenReserve[_token] -= amount;
         
         // 유저에게 토큰 전송
-        require(IERC20(_token).transfer(_to, amount), "LiquidityLogic: transfer fail");
+        require(IERC20(_token).transfer(_to, amount), "RemoveLiquidity: transfer fail");
 
         emit RemoveLiquidity(_token, amount, _to);
         return amount;
     }
+
+
 }
