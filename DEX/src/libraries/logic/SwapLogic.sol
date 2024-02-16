@@ -8,6 +8,8 @@ import "../types/Constants.sol";
 import "../types/DataTypes.sol";
 
 library SwapLogic {
+    using PriceFeedLogic for DataTypes.ReserveData;
+
     event Swap(address _tokenIn, address _tokenOut, uint256 _amountIn, address _to);
 
     function swap(DataTypes.ReserveData storage self, address _tokenIn, address _tokenOut, uint256 _amountIn, address _to) internal returns (uint256 amountIn, uint256 amountOut) {
@@ -16,8 +18,8 @@ library SwapLogic {
         // 바꾸려는 amount가 0보다 큰지
         require(_amountIn > 0, "SwapLogic: amountIn must bigger than 0");
         // 받을 수 있는 토큰 개수 계산
-        uint256 priceIn = PriceFeedLogic.getPrice(self.priceFeedData, _tokenIn, false);
-        uint256 priceOut = PriceFeedLogic.getPrice(self.priceFeedData, _tokenOut, true);
+        uint256 priceIn = self.getPrice(_tokenIn, false);
+        uint256 priceOut = self.getPrice(_tokenOut, true);
         amountIn = _amountIn - (_amountIn * self.totalData.txFeeBP / Constants.BASIS_POINT);
         amountOut = (amountIn * priceIn) / priceOut;
         

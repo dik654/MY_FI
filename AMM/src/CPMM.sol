@@ -74,7 +74,7 @@ contract CPMM is ReentrancyGuard, ICPMM, ERC20 {
     }
 
     function burn(address _to, uint256 amount) external nonReentrant returns (uint256 amount0, uint256 amount1) {
-        (bool success)= transferFrom(tx.origin, address(this), amount);
+        (bool success)= transferFrom(msg.sender, address(this), amount);
         require(success, "BURN:LIQUIDITY_INSERT_FAILED");
         (uint112 _reserve0, uint112 _reserve1,) = getReserves();
         uint256 balance0 = IERC20(token0).balanceOf(address(this));

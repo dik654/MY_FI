@@ -9,9 +9,21 @@ contract TestLiquidityLogic {
 
     DataTypes.ReserveData internal _reserveData;
 
+    function initialize(uint256 _maxLimit, uint256 _txFee) external {
+        _reserveData.totalData.maxLimit = _maxLimit;
+        _reserveData.totalData.txFeeBP = _txFee;
+    }
+
+    function mappingDepositToken(address _token, address _deposit) external {
+        _reserveData.depositTokenAddress[_token] = _deposit;
+    }
+
+    function getDepositToken(address _token) external view returns (address) {
+        return _reserveData.depositTokenAddress[_token];
+    }
+
     function addLiquidity(address _token, uint256 _amount, address _to) external returns (uint256) {
-        return LiquidityLogic.addLiquidity(
-            _reserveData, 
+        return _reserveData.addLiquidity(
             _token, 
             _amount, 
             _to
@@ -19,8 +31,7 @@ contract TestLiquidityLogic {
     }
 
     function removeLiquidity(address _token, uint256 _amount, address _to) external returns (uint256) {
-        return LiquidityLogic.removeLiquidity(
-            _reserveData,
+        return _reserveData.removeLiquidity(
             _token,
             _amount,
             _to

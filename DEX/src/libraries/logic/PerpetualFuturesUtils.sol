@@ -8,6 +8,15 @@ import "../types/Constants.sol";
 import "./PriceFeedLogic.sol";
 
 library PerpetualFuturesUtils {
+    struct ReduceCollateralParams {
+        uint256 fee;
+        bool hasProfit;
+        uint256 adjustedDelta;
+        uint256 usdOut;
+        uint256 usdOutAfterFee;
+        uint256 tokenAmount;
+    }
+
     function getPositionKey(address _account,address _token, bool _isLong) internal pure returns (bytes32) {
         return keccak256(abi.encodePacked(
             _account,
@@ -41,7 +50,7 @@ library PerpetualFuturesUtils {
         require(_averagePrice > 0, "no average price");
         // 이득이 있는지 체크해야하므로 long일 경우 
         // 여러 데이터 중 최소 가격을 가져와서 이득인지 체크할 준비
-        uint256 price = PriceFeedLogic.getPrice(self.priceFeedData, _token, _isLong);
+        uint256 price = PriceFeedLogic.getPrice(self, _token, _isLong);
         uint256 priceDelta = _averagePrice > price ? _averagePrice - price : price - _averagePrice;
         uint256 delta = _size * priceDelta / _averagePrice;
 
@@ -101,12 +110,12 @@ library PerpetualFuturesUtils {
 
     function usdToToken(DataTypes.ReserveData storage self, address _token, uint256 _usdAmount, bool _maximise) internal view returns (uint256) {
         if (_usdAmount == 0) { return 0; }
-        return (_usdAmount * Constants.PRICE_PRECISION / PriceFeedLogic.getPrice(self.priceFeedData, _token, _maximise));
+        return (_usdAmount * Constants.PRICE_PRECISION / PriceFeedLogic.getPrice(self, _token, _maximise));
     }
 
     function tokenToUsd(DataTypes.ReserveData storage self, address _token, uint256 _tokenAmount, bool _maximise) internal view returns (uint256) {
         if (_tokenAmount == 0) { return 0; }
-        uint256 price = PriceFeedLogic.getPrice(self.priceFeedData , _token, _maximise);
+        uint256 price = PriceFeedLogic.getPrice(self , _token, _maximise);
         return _tokenAmount * price / Constants.PRICE_PRECISION;
     }
 
@@ -170,76 +179,74 @@ library PerpetualFuturesUtils {
     }
 
     function reduceCollateral(DataTypes.ReserveData storage self, address _account, address _token, uint256 _collateralDelta, uint256 _sizeDelta, bool _isLong) internal returns (uint256, uint256) {
+        ReduceCollateralParams memory params;
         bytes32 key = getPositionKey(_account, _token, _isLong);
         DataTypes.PositionData storage position = self.positions[key];
+        
 
-        uint256 fee = collectMarginFees(self, _token, _sizeDelta, position.size, position.entryFundingRate);
-        bool hasProfit;
-        uint256 adjustedDelta;
+        params.fee = collectMarginFees(self, _token, _sizeDelta, position.size, position.entryFundingRate);
 
         {
-        (bool _hasProfit, uint256 delta) = getDelta(self, _token, position.size, position.averagePrice, _isLong, position.lastIncreasedTime);
-        hasProfit = _hasProfit;
+        (params.hasProfit, params.adjustedDelta) = getDelta(self, _token, position.size, position.averagePrice, _isLong, position.lastIncreasedTime);
         // get the proportional change in pnl
-        adjustedDelta = _sizeDelta * delta / position.size;
+        params.adjustedDelta = _sizeDelta * params.adjustedDelta / position.size;
         }
 
-        uint256 usdOut;
         // transfer profits out
-        if (hasProfit && adjustedDelta > 0) {
-            usdOut = adjustedDelta;
-            position.realisedPnl = position.realisedPnl + int256(adjustedDelta);
+        if (params.hasProfit && params.adjustedDelta > 0) {
+            params.usdOut = params.adjustedDelta;
+            position.realisedPnl = position.realisedPnl + int256(params.adjustedDelta);
 
             // pay out realised profits from the pool amount for short positions
             if (!_isLong) {
-                uint256 tokenAmount = usdToToken(self, _token, adjustedDelta, true);
-                decreasePoolAmount(self, _token, tokenAmount, _isLong);
+                params.tokenAmount =(params.adjustedDelta * Constants.PRICE_PRECISION / PriceFeedLogic.getPrice(self, _token, true));
+                decreasePoolAmount(self, _token, params.tokenAmount, _isLong);
             }
         }
 
-        if (!hasProfit && adjustedDelta > 0) {
-            position.collateral = position.collateral - adjustedDelta;
+        if (!params.hasProfit && params.adjustedDelta > 0) {
+            position.collateral = position.collateral - params.adjustedDelta;
 
             // transfer realised losses to the pool for short positions
             // realised losses for long positions are not transferred here as
             // _increasePoolAmount was already called in increasePosition for longs
             if (!_isLong) {
-                uint256 tokenAmount = usdToToken(self, _token, adjustedDelta, true);
-                increasePoolAmount(self, _token, tokenAmount, _isLong);
+                params.tokenAmount = usdToToken(self, _token, params.adjustedDelta, true);
+                increasePoolAmount(self, _token, params.tokenAmount, _isLong);
             }
 
-            position.realisedPnl = position.realisedPnl - int256(adjustedDelta);
+            position.realisedPnl = position.realisedPnl - int256(params.adjustedDelta);
         }
 
         // reduce the position's collateral by _collateralDelta
         // transfer _collateralDelta out
         if (_collateralDelta > 0) {
-            usdOut = usdOut + _collateralDelta;
+            params.usdOut = params.usdOut + _collateralDelta;
             position.collateral -= _collateralDelta;
         }
 
         // if the position will be closed, then transfer the remaining collateral out
         if (position.size == _sizeDelta) {
-            usdOut += position.collateral;
+            params.usdOut += position.collateral;
             position.collateral = 0;
         }
 
         // if the usdOut is more than the fee then deduct the fee from the usdOut directly
         // else deduct the fee from the position's collateral
-        uint256 usdOutAfterFee = usdOut;
-        if (usdOut > fee) {
-            usdOutAfterFee = usdOut - fee;
+        uint256 usdOutAfterFee = params.usdOut;
+        if (params.usdOut > params.fee) {
+            usdOutAfterFee = params.usdOut - params.fee;
         } else {
-            position.collateral -= fee;
+            position.collateral -= params.fee;
             if (_isLong) {
-                uint256 feeTokens = usdToToken(self, _token, fee, true);
-                decreasePoolAmount(self, _token, feeTokens, _isLong);
+                params.tokenAmount = usdToToken(self, _token, params.fee, true);
+                decreasePoolAmount(self, _token, params.tokenAmount, _isLong);
             }
         }
 
-        emit IPerpetualFutureLogic.UpdatePnl(key, hasProfit, adjustedDelta);
+        emit IPerpetualFutureLogic.UpdatePnl(key, params.hasProfit, params.adjustedDelta);
 
-        return (usdOut, usdOutAfterFee);
+        return (params.usdOut, usdOutAfterFee);
     }
 
     function increasePoolAmount(DataTypes.ReserveData storage self, address _token, uint256 _amount, bool _isLong) internal {

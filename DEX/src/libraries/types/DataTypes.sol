@@ -50,4 +50,25 @@ library DataTypes {
     mapping (address => mapping(bool => uint256)) reservedAmounts;
     mapping (address => mapping(bool => uint256)) guaranteedUsd;
   }
+
+  struct PositionAdjustmentParams {
+        address account;
+        address token;
+        uint256 collateralDelta;
+        uint256 sizeDelta;
+        bool isLong;
+        address receiver;
+        uint256 price;
+        uint256 fee;
+        uint256 collateralDeltaUsd;
+        uint256 reserveDelta;
+        uint256 usdOut;
+        uint256 usdOutAfterFee;
+        uint256 liquidationState;
+        uint256 marginFees;
+        // reduceCollateral
+        bool hasProfit;
+        uint256 adjustedDelta;
+        uint256 amount;
+    }
 }

@@ -12,7 +12,6 @@ library LiquidityLogic {
     event AddLiquidity(address indexed _token, uint256 _amount, address _to);
     event RemoveLiquidity(address indexed _token, uint256 _amount, address _to);
 
-    // TODO: 컨트랙트 단에서 슬리피지 amountMin 처리
     function addLiquidity(DataTypes.ReserveData storage self, address _token, uint256 _amount, address _to) internal returns (uint256) {
     require(_amount > 0, "LiquidityLogic: add zero liquidity");
         // 토큰 전송
@@ -32,7 +31,6 @@ library LiquidityLogic {
         return amount;
     }
 
-    // TODO: 컨트랙트 단에서 슬리피지 amountMin 처리
     function removeLiquidity(DataTypes.ReserveData storage self, address _token, uint256 _amount, address _to) internal returns (uint256) {
         require(_amount > 0, "RemoveLiquidity: remove zero liquidity");
         // deposit token 제거
@@ -47,6 +45,7 @@ library LiquidityLogic {
 
         emit RemoveLiquidity(_token, amount, _to);
         return amount;
+        // return 0;
     }
 
 

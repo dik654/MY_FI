@@ -5,9 +5,9 @@ import "../../src/libraries/types/DataTypes.sol";
 import "../../src/libraries/logic/PriceFeedLogic.sol";
 
 contract TestPriceFeedLogic {
-    using PriceFeedLogic for DataTypes.PriceFeedData;
+    using PriceFeedLogic for DataTypes.ReserveData;
 
-    DataTypes.PriceFeedData internal _priceFeedData;
+    DataTypes.ReserveData internal _reserveData;
 
     function initialize(
         address _priceFeed, 
@@ -15,8 +15,7 @@ contract TestPriceFeedLogic {
         address _weth, 
         address _dai
     ) external {
-        PriceFeedLogic.initialize(
-            _priceFeedData, 
+        _reserveData.initialize(
             _priceFeed, 
             _addressResolver,
             _weth,
@@ -28,8 +27,7 @@ contract TestPriceFeedLogic {
         address _token, 
         bool _maximise
     ) external view returns (uint256 price) {
-        return PriceFeedLogic.getPrice(
-            _priceFeedData,
+        return _reserveData.getPrice(
             _token,
             _maximise
         );
@@ -38,8 +36,7 @@ contract TestPriceFeedLogic {
     function getPrimaryPrice(
         address _token
     ) external view returns (uint256 price) {
-        return PriceFeedLogic.getPrimaryPrice(
-            _priceFeedData,
+        return _reserveData.getPrimaryPrice(
             _token
         );
     }
@@ -49,8 +46,7 @@ contract TestPriceFeedLogic {
         bool _maximise, 
         uint256 _price
     ) external view returns (uint256 price) {
-        return PriceFeedLogic.getAmmPrice(
-            _priceFeedData,
+        return _reserveData.getAmmPrice(
             _token,
             _maximise,
             _price
@@ -58,10 +54,10 @@ contract TestPriceFeedLogic {
     }
 
     function getEthPrice() external view returns (uint256 price) {
-        return PriceFeedLogic.getEthPrice(_priceFeedData);
+        return PriceFeedLogic.getEthPrice(_reserveData);
     }
 
     function getPairPrice(address _token) external view returns (uint256 price) {
-        return PriceFeedLogic.getPairPrice(_priceFeedData, _token);
+        return PriceFeedLogic.getPairPrice(_reserveData, _token);
     }
 }

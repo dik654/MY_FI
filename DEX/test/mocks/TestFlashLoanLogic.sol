@@ -9,14 +9,13 @@ contract TestFlashLoanLogic {
 
     DataTypes.ReserveData internal _reserveData;
 
-    function executeFlashLoan(address _token, uint256 _amount, address _to, address _contract, bytes memory _data) external {
-        FlashLoanLogic.executeFlashLoan(
-            _reserveData, 
+    function executeFlashLoan(address _token, uint256 _amount, uint256 _premium, address _contract) external {
+        _reserveData.executeFlashLoan(
             _token, 
             _amount, 
-            _to, 
+            _premium, 
             _contract, 
-            _data
+            "0x"
         );
     }
 }

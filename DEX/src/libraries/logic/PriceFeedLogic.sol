@@ -9,14 +9,14 @@ import "../../libraries/types/Constants.sol";
 import "../types/DataTypes.sol";
 
 library PriceFeedLogic {
-    function initialize(DataTypes.PriceFeedData storage self, address _priceFeed, address _addressResolver, address _weth, address _dai) internal {
-        self.priceFeed = _priceFeed;
-        self.addressResolver = _addressResolver;
-        self.weth = _weth;
-        self.dai = _dai;
+    function initialize(DataTypes.ReserveData storage self, address _priceFeed, address _addressResolver, address _weth, address _dai) internal {
+        self.priceFeedData.priceFeed = _priceFeed;
+        self.priceFeedData.addressResolver = _addressResolver;
+        self.priceFeedData.weth = _weth;
+        self.priceFeedData.dai = _dai;
     }
     
-    function getPrice(DataTypes.PriceFeedData storage self, address _token, bool _maximise) internal view returns (uint256) {
+    function getPrice(DataTypes.ReserveData storage self, address _token, bool _maximise) internal view returns (uint256) {
         // oracle에서 가격 정보 받아오기
         uint256 price = getPrimaryPrice(self, _token);
         // oracle과 amm 가격 비교하여 제시
@@ -24,8 +24,8 @@ library PriceFeedLogic {
         return price;
     }
 
-    function getPrimaryPrice(DataTypes.PriceFeedData storage self, address _token) internal view returns (uint256) {
-        address priceFeed = self.priceFeed;
+    function getPrimaryPrice(DataTypes.ReserveData storage self, address _token) internal view returns (uint256) {
+        address priceFeed = self.priceFeedData.priceFeed;
         require(priceFeed != address(0), "PriceFeed: invalid price feed");
         // oracle이 최신화되었는지 체크
         require(IPriceFeed(priceFeed).healthCheck(), "PriceFeed: Price feeds are not being updated");
@@ -33,7 +33,7 @@ library PriceFeedLogic {
         return IPriceFeed(priceFeed).getAssetPrice(_token) * (Constants.PRICE_PRECISION / Constants.COIN_MARKET_CAP_PRECISION);
     }
 
-    function getAmmPrice(DataTypes.PriceFeedData storage self, address _token, bool _maximise, uint256 _price) internal view returns (uint256) {
+    function getAmmPrice(DataTypes.ReserveData storage self, address _token, bool _maximise, uint256 _price) internal view returns (uint256) {
         uint256 ethDai = getEthPrice(self);
         uint256 tokenEth = getPairPrice(self, _token);
         // 몇 달러의 가치가 있는지 계산
@@ -50,11 +50,11 @@ library PriceFeedLogic {
         return _price;
     }
 
-    function getEthPrice(DataTypes.PriceFeedData storage self) internal view returns (uint256) {
-        address weth = self.weth;
-        address dai = self.dai;
+    function getEthPrice(DataTypes.ReserveData storage self) internal view returns (uint256) {
+        address weth = self.priceFeedData.weth;
+        address dai = self.priceFeedData.dai;
         (address token0, address token1) = weth < dai ? (weth, dai) : (dai, weth);
-        address pair = IFactory(IAddressResolver(self.addressResolver).factory()).getPair(token0, token1);
+        address pair = IFactory(IAddressResolver(self.priceFeedData.addressResolver).factory()).getPair(token0, token1);
 
         if (pair == address(0)) {
             revert("GetPairPrice: no pair on AMM");
@@ -69,10 +69,10 @@ library PriceFeedLogic {
         }
     }
 
-    function getPairPrice(DataTypes.PriceFeedData storage self, address _token) internal view returns (uint256) {
-        address weth = self.weth;
+    function getPairPrice(DataTypes.ReserveData storage self, address _token) internal view returns (uint256) {
+        address weth = self.priceFeedData.weth;
         (address token0, address token1) = _token < weth ? (_token, weth) : (weth, _token);
-        address pair = IFactory(IAddressResolver(self.addressResolver).factory()).getPair(token0, token1);
+        address pair = IFactory(IAddressResolver(self.priceFeedData.addressResolver).factory()).getPair(token0, token1);
         if (pair == address(0)) {
             revert("GetPairPrice: no pair on AMM");
         }

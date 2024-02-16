@@ -6,16 +6,9 @@ import "./mocks/TestPriceFeedLogic.sol";
 import "../src/AddressResolver.sol";
 import "./mocks/PriceFeed.sol";
 import "./mocks/Factory.sol";
-import "./mocks/utils/ERC20.sol";
 import "./mocks/Router.sol";
+import "./mocks/MockToken.sol";
 
-contract MockToken is ERC20 {
-    constructor(string memory _name, string memory _symbol) ERC20(_name, _symbol) {}
-
-    function mint(address _account, uint256 _value) public {
-        _mint(_account, _value);
-    }
-}
 
 contract PriceFeedLogicTest is Test {
     address someRandomUser = vm.addr(2);
