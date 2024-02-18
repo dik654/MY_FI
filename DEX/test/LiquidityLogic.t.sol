@@ -20,7 +20,7 @@ contract LiquidityLogicTest is Test {
         vm.stopPrank();
     }
 
-    function testAddLiquidity() public {
+    function test_AddLiquidity() public {
         setUp();
         vm.startPrank(someRandomUser);
         TestLiquidityLogic testLiquidityLogic = new TestLiquidityLogic();
@@ -32,7 +32,7 @@ contract LiquidityLogicTest is Test {
         vm.stopPrank();
     }
 
-    function testRemoveLiquidity() public {
+    function test_RemoveLiquidity() public {
         setUp();
         vm.startPrank(someRandomUser);
         TestLiquidityLogic testLiquidityLogic = new TestLiquidityLogic();

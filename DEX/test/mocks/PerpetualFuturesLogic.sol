@@ -1,15 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "../types/DataTypes.sol";
-import "../types/Constants.sol";
-import "./PriceFeedLogic.sol";
+import "./interfaces/IERC20.sol";
+import "./MockPriceFeedLogic.sol";
 import "./PerpetualFuturesUtils.sol";
+import "../../src/libraries/types/DataTypes.sol";
+import "../../src/libraries/types/Constants.sol";
 import "./FundingRateLogic.sol";
 
 library PerpetualFuturesLogic {
     using PerpetualFuturesUtils for DataTypes.ReserveData;
-    using PriceFeedLogic for DataTypes.ReserveData;
+    using MockPriceFeedLogic for DataTypes.ReserveData;
     using FundingRateLogic for DataTypes.ReserveData;
 
     function increasePosition(DataTypes.ReserveData storage self, DataTypes.PositionAdjustmentParams memory params) internal {

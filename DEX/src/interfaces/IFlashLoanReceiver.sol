@@ -6,6 +6,7 @@ interface IFlashLoanReceiver {
     address asset,
     uint256 amount,
     uint256 premium,
+    address to,
     address initiator,
     bytes calldata params
   ) external returns (bool);

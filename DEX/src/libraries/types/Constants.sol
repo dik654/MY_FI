@@ -10,4 +10,5 @@ library Constants {
     uint256 internal constant MARGIN_FEE_BASIS_POINTS = 10;
     uint256 internal constant LIQUIDATION_FEE_USD = 10;
     uint256 internal constant MAX_LEVERAGE = 50 * 10000;
+    uint256 internal constant FUNDING_INTERVAL = 1 minutes;
 }

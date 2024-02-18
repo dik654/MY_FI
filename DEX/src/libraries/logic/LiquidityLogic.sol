@@ -5,6 +5,7 @@ import "../../interfaces/IERC20.sol";
 import "../../interfaces/IDERC20.sol";
 import "./PriceFeedLogic.sol";
 import "./ValidityLogic.sol";
+import "./FundingRateLogic.sol";
 import "../types/Constants.sol";
 import "../types/DataTypes.sol";
 
@@ -12,10 +13,14 @@ library LiquidityLogic {
     event AddLiquidity(address indexed _token, uint256 _amount, address _to);
     event RemoveLiquidity(address indexed _token, uint256 _amount, address _to);
 
+    using FundingRateLogic for DataTypes.ReserveData;
+
     function addLiquidity(DataTypes.ReserveData storage self, address _token, uint256 _amount, address _to) internal returns (uint256) {
     require(_amount > 0, "LiquidityLogic: add zero liquidity");
         // 토큰 전송
         IERC20(_token).transferFrom(msg.sender, address(this), _amount);
+        self.updateCumulativeFundingRate(_token, true);
+        self.updateCumulativeFundingRate(_token, false);
         ValidityLogic.validateReserveMaxLimit(self, _token, _amount);
         // reserve에 토큰 개수만큼 추가 (totalSupply)
         self.tokenReserve[_token] += _amount;
@@ -35,6 +40,8 @@ library LiquidityLogic {
         require(_amount > 0, "RemoveLiquidity: remove zero liquidity");
         // deposit token 제거
         IDERC20(self.depositTokenAddress[_token]).burn(msg.sender, _amount);
+        self.updateCumulativeFundingRate(_token, true);
+        self.updateCumulativeFundingRate(_token, false);
         // 수수료를 제외한 양 계산
         uint256 amount = _amount - (_amount * self.totalData.txFeeBP / Constants.BASIS_POINT);
         // 수수료를 제외한, 꺼낸 토큰만큼 reserve에 적용
@@ -45,7 +52,6 @@ library LiquidityLogic {
 
         emit RemoveLiquidity(_token, amount, _to);
         return amount;
-        // return 0;
     }
 
 

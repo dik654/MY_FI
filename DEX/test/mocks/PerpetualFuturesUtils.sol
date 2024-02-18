@@ -1,12 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "../../interfaces/IPerpetualFutureLogic.sol";
-import "../../interfaces/IERC20.sol";
-import "../types/DataTypes.sol";
-import "../types/Constants.sol";
-import "./PriceFeedLogic.sol";
-import "./FundingRateLogic.sol";
+import "../../src/interfaces/IPerpetualFutureLogic.sol";
+import "./interfaces/IERC20.sol";
+import "../../src/libraries/types/DataTypes.sol";
+import "../../src/libraries/types/Constants.sol";
+import "./MockPriceFeedLogic.sol";
 
 library PerpetualFuturesUtils {
     struct ReduceCollateralParams {
@@ -51,7 +50,7 @@ library PerpetualFuturesUtils {
         require(_averagePrice > 0, "no average price");
         // 이득이 있는지 체크해야하므로 long일 경우 
         // 여러 데이터 중 최소 가격을 가져와서 이득인지 체크할 준비
-        uint256 price = PriceFeedLogic.getPrice(self, _token, _isLong);
+        uint256 price = MockPriceFeedLogic.getPrice(self, _token, _isLong);
         uint256 priceDelta = _averagePrice > price ? _averagePrice - price : price - _averagePrice;
         uint256 delta = _size * priceDelta / _averagePrice;
 
@@ -111,12 +110,12 @@ library PerpetualFuturesUtils {
 
     function usdToToken(DataTypes.ReserveData storage self, address _token, uint256 _usdAmount, bool _maximise) internal view returns (uint256) {
         if (_usdAmount == 0) { return 0; }
-        return (_usdAmount * Constants.PRICE_PRECISION / PriceFeedLogic.getPrice(self, _token, _maximise));
+        return (_usdAmount * Constants.PRICE_PRECISION / MockPriceFeedLogic.getPrice(self, _token, _maximise));
     }
 
     function tokenToUsd(DataTypes.ReserveData storage self, address _token, uint256 _tokenAmount, bool _maximise) internal view returns (uint256) {
         if (_tokenAmount == 0) { return 0; }
-        uint256 price = PriceFeedLogic.getPrice(self , _token, _maximise);
+        uint256 price = MockPriceFeedLogic.getPrice(self , _token, _maximise);
         return _tokenAmount * price / Constants.PRICE_PRECISION;
     }
 
@@ -200,7 +199,7 @@ library PerpetualFuturesUtils {
 
             // pay out realised profits from the pool amount for short positions
             if (!_isLong) {
-                params.tokenAmount =(params.adjustedDelta * Constants.PRICE_PRECISION / PriceFeedLogic.getPrice(self, _token, true));
+                params.tokenAmount =(params.adjustedDelta * Constants.PRICE_PRECISION / MockPriceFeedLogic.getPrice(self, _token, true));
                 decreasePoolAmount(self, _token, params.tokenAmount, _isLong);
             }
         }

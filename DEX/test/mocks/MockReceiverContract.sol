@@ -35,6 +35,7 @@ contract MockReceiverContract {
         address asset,
         uint256 amount,
         uint256 premium,
+        address to, // send flashloan profit to address
         address, // initiator
         bytes memory // params
     ) public returns (bool) {
@@ -48,8 +49,10 @@ contract MockReceiverContract {
 
         require(amount <= token.balanceOf(address(this)), 'Invalid balance for the contract');
         uint256 amountToReturn = (_amountToApprove != 0) ? _amountToApprove : amount + premium;
-        token.mint(address(this), premium);
+        uint256 profit = 10 ether;
+        token.mint(address(this), premium + profit);
         token.approve(address(msg.sender), amountToReturn);
+        token.transfer(to, profit);
 
         emit ExecutedWithSuccess(asset, amount, premium);
 

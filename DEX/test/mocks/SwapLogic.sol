@@ -1,27 +1,20 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "../../interfaces/IERC20.sol";
-import "./PriceFeedLogic.sol";
-import "./ValidityLogic.sol";
-import "./FundingRateLogic.sol";
-import "../types/Constants.sol";
-import "../types/DataTypes.sol";
+import "../../src/interfaces/IERC20.sol";
+import "./MockPriceFeedLogic.sol";
+import "../../src/libraries/logic/ValidityLogic.sol";
+import "../../src/libraries/types/Constants.sol";
+import "../../src/libraries/types/DataTypes.sol";
 
 library SwapLogic {
-    using PriceFeedLogic for DataTypes.ReserveData;
-    using FundingRateLogic for DataTypes.ReserveData;
+    using MockPriceFeedLogic for DataTypes.ReserveData;
 
     event Swap(address _tokenIn, address _tokenOut, uint256 _amountIn, address _to);
 
     function swap(DataTypes.ReserveData storage self, address _tokenIn, address _tokenOut, uint256 _amountIn, address _to) internal returns (uint256 amountIn, uint256 amountOut) {
         // 토큰 넣기
         require(IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn), "SwapLogic: transferFrom tokenIn fail");
-        self.updateCumulativeFundingRate(_tokenIn, true);
-        self.updateCumulativeFundingRate(_tokenIn, false);
-        self.updateCumulativeFundingRate(_tokenOut, true);
-        self.updateCumulativeFundingRate(_tokenOut, false);
-        
         // 바꾸려는 amount가 0보다 큰지
         require(_amountIn > 0, "SwapLogic: amountIn must bigger than 0");
         // 받을 수 있는 토큰 개수 계산

@@ -9,11 +9,22 @@ contract TestFlashLoanLogic {
 
     DataTypes.ReserveData internal _reserveData;
 
-    function executeFlashLoan(address _token, uint256 _amount, uint256 _premium, address _contract) external {
+    function initialize(address _token, uint256 _amount, uint256 _maxLimit, uint256 _crr, uint256 _flashLoanBP) external {
+        _reserveData.tokenReserve[_token] = _amount;
+        _reserveData.totalData.maxLimit = _maxLimit;
+        _reserveData.totalData.cashReserveRatio = _crr;
+        _reserveData.totalData.flashLoanBP = _flashLoanBP;
+    }
+
+    function getTokenReserve(address _token) external view returns (uint256) {
+        return _reserveData.tokenReserve[_token];
+    }
+
+    function executeFlashLoan(address _token, uint256 _amount, address _to, address _contract) external {
         _reserveData.executeFlashLoan(
             _token, 
             _amount, 
-            _premium, 
+            _to, 
             _contract, 
             "0x"
         );
