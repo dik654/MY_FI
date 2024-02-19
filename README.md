@@ -23,6 +23,10 @@ forge script script/DeployAmm.s.sol:DeployAmmScript --rpc-url http://localhost:8
 forge script script/ControlAmm.s.sol:ControlAmmScript --rpc-url http://localhost:8545 --broadcast --account testAccount --sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
 
 cd ..
+cd DEX
+forge script script/DeployDex.s.sol:DeployDexScript --rpc-url http://localhost:8545 --broadcast --account testAccount --sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+
+cd ..
 cd goApp
 // copy contract addresses to .env file
 // execute main binary to write price data to PriceFeed contract
