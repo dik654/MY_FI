@@ -45,7 +45,7 @@ contract ControlAmmScript is Script {
         }
         ERC20(dai).approve(address(router), approveAmount);
         ERC20(weth).approve(address(router), approveAmount);
-        router.addLiquidity(dai, weth, approveAmount, approveAmount, approveAmount * 95/100, approveAmount * 95/100, admin, block.timestamp + 1 hours);
+        router.addLiquidity(dai, weth, approveAmount, approveAmount, approveAmount * 95/100, approveAmount * 95/100, admin, block.timestamp + 10 hours);
         console2.log("After daiWethPair: ", daiWethPair.totalSupply());
         
         CPMM wethWbtcPair = CPMM(wethWbtc);

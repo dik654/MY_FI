@@ -4,6 +4,7 @@ pragma solidity ^0.8.19;
 import "./interfaces/IFactory.sol";
 import "./interfaces/IRouter.sol";
 import "./interfaces/IERC20.sol";
+import "./interfaces/ICPMM.sol";
 import "./libraries/CPMMLibrary.sol";
 
 contract Router is IRouter {
@@ -30,9 +31,9 @@ contract Router is IRouter {
     ) external override ensure(deadline) returns (uint256 amountA, uint256 amountB, uint256 liquidity) {
         (amountA, amountB) = _addLiquidity(tokenA, tokenB, amountADesired, amountBDesired, amountAMin, amountBMin);
         address pair = CPMMLibrary.pairFor(factory, tokenA, tokenB);
-        IERC20(tokenA).transferFrom(msg.sender, address(this), amountA);
-        IERC20(tokenB).transferFrom(msg.sender, address(this), amountB);
-        liquidity = ICPMM(pair).mint(to, amountA, amountB);
+        require(IERC20(tokenA).transferFrom(msg.sender, pair, amountA), "AddLiquidity: fail to send tokenA to pair");
+        require(IERC20(tokenB).transferFrom(msg.sender, pair, amountB), "AddLiquidity: fail to send tokenB to pair");
+        liquidity = ICPMM(pair).mint(to);
     }
 
     function _addLiquidity(

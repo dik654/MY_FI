@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GLP v3.0
 pragma solidity ^0.8.19;
 
-import '../interfaces/ICPMM.sol';
 import '../CPMM.sol';
 
 library CPMMLibrary {
@@ -28,8 +27,8 @@ library CPMMLibrary {
 
     function getReserves(address factory, address tokenA, address tokenB) internal view returns (uint reserveA, uint reserveB) {
         (address token0,) = sortTokens(tokenA, tokenB);
-        (uint reserve0, uint reserve1,) = ICPMM(pairFor(factory, tokenA, tokenB)).getReserves();
-        (reserveA, reserveB) = tokenA == token0 ? (reserve0, reserve1) : (reserve1, reserve0);
+        (uint reserve0, uint reserve1,) = CPMM(pairFor(factory, tokenA, tokenB)).getReserves();
+        (reserveA, reserveB) = tokenA == token0 ? (reserve0, reserve1) : (reserve1, reserve0); 
     }
 
     function quote(uint amountA, uint reserveA, uint reserveB) internal pure returns (uint amountB) {

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
+import "forge-std/console.sol";
 import "./libraries/types/DataTypes.sol";
 import "./libraries/logic/SwapLogic.sol";
 import "./libraries/logic/LiquidityLogic.sol";
@@ -8,6 +9,7 @@ import "./libraries/logic/FlashLoanLogic.sol";
 import "./libraries/logic/PerpetualFuturesLogic.sol";
 import "./libraries/logic/PriceFeedLogic.sol";
 import "./libraries/utils/ReentrancyGuard.sol";
+import "./interfaces/IAddressResolver.sol";
 
 contract Vault is ReentrancyGuard {
     using LiquidityLogic for DataTypes.ReserveData;
@@ -15,15 +17,21 @@ contract Vault is ReentrancyGuard {
     using FlashLoanLogic for DataTypes.ReserveData;
     using PriceFeedLogic for DataTypes.PriceFeedData;
 
-    DataTypes.PriceFeedData internal _priceFeedData;
     DataTypes.ReserveData internal _reserveData;
 
-    function initialize(
+    modifier onlyOwner {
+        if (msg.sender != IAddressResolver(_reserveData.priceFeedData.addressResolver).admin()) {
+            revert("AddressResolver: not owner");
+        }
+        _;
+    }
+
+    constructor(
         address _priceFeed, 
         address _addressResolver, 
         address _weth, 
         address _dai
-    ) external {
+    ) {
         PriceFeedLogic.initialize(
             _reserveData, 
             _priceFeed, 

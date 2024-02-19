@@ -54,23 +54,25 @@ contract CPMM is ReentrancyGuard, ICPMM, ERC20 {
         emit Sync(reserve0, reserve1);
     }
 
-    function mint(address _to, uint256 _amount0, uint256 _amount1) external nonReentrant returns (uint256 liquidity) {
-        (uint112 _reserve0, uint112 _reserve1,) = getReserves();
-        IERC20(token0).transfer(address(this), _amount0);
-        IERC20(token1).transfer(address(this), _amount1);
+    function mint(address _to) external nonReentrant returns (uint256 liquidity) {
+        (uint112 _reserve0, uint112 _reserve1,) = getReserves(); // gas savings
+        uint balance0 = IERC20(token0).balanceOf(address(this));
+        uint balance1 = IERC20(token1).balanceOf(address(this));
+        uint amount0 = balance0 - _reserve0;
+        uint amount1 = balance1 - _reserve1;
 
         uint256 _totalSupply = totalSupply();
         if (_totalSupply == 0) {
-            liquidity = Math.sqrt(_amount0 * _amount1) - MINIMUM_LIQUIDITY;
+            liquidity = Math.sqrt(amount0 * amount1) - MINIMUM_LIQUIDITY;
             _mint(address(0), MINIMUM_LIQUIDITY);
         } else {
-            liquidity = Math.min(_amount0 * _totalSupply / _reserve0, _amount0 * _totalSupply / _reserve1);
+            liquidity = Math.min(amount0 * _totalSupply / _reserve0, amount0 * _totalSupply / _reserve1);
         }
         require(liquidity > 0, 'MINT:INSUFFICIENT_LIQUIDITY_MINTED');
         _mint(_to, liquidity);
 
         _update(IERC20(token0).balanceOf(address(this)), IERC20(token1).balanceOf(address(this)), _reserve0, _reserve1);
-        emit Mint(msg.sender, _amount0, _amount1);
+        emit Mint(msg.sender, amount0, amount1);
     }
 
     function burn(address _to, uint256 amount) external nonReentrant returns (uint256 amount0, uint256 amount1) {
