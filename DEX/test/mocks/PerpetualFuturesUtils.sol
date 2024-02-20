@@ -108,12 +108,12 @@ library PerpetualFuturesUtils {
         return _size * fundingRate / 1000000;
     }
 
-    function usdToToken(DataTypes.ReserveData storage self, address _token, uint256 _usdAmount, bool _maximise) internal view returns (uint256) {
+    function usdToToken(DataTypes.ReserveData storage self, address _token, uint256 _usdAmount, bool _maximise) internal pure returns (uint256) {
         if (_usdAmount == 0) { return 0; }
         return (_usdAmount * Constants.PRICE_PRECISION / MockPriceFeedLogic.getPrice(self, _token, _maximise));
     }
 
-    function tokenToUsd(DataTypes.ReserveData storage self, address _token, uint256 _tokenAmount, bool _maximise) internal view returns (uint256) {
+    function tokenToUsd(DataTypes.ReserveData storage self, address _token, uint256 _tokenAmount, bool _maximise) internal pure returns (uint256) {
         if (_tokenAmount == 0) { return 0; }
         uint256 price = MockPriceFeedLogic.getPrice(self , _token, _maximise);
         return _tokenAmount * price / Constants.PRICE_PRECISION;

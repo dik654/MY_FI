@@ -9,17 +9,11 @@ library DataTypes {
     address dai;
   }
 
-  struct UserData {
-    mapping(address => uint256) balance;
-  }
-
   struct TotalData {
     uint256 flashLoanBP;
     uint256 txFeeBP;
-    uint256 totalValue;
     uint256 maxLimit;
     uint256 cashReserveRatio;
-    uint256 executionFee;
   }
 
   struct ReserveData {
@@ -31,7 +25,6 @@ library DataTypes {
     mapping(address => uint256) feeReserves;
     mapping(address => mapping(bool => uint256)) cumulativeFundingRates;
     mapping(address => mapping(bool => uint256)) lastFundingTimes;
-    mapping(address => UserData) userData;
     mapping(bytes32 => PositionData) positions;
     TokenPositionData tokenPositionData;
   }

@@ -88,7 +88,7 @@ contract CPMM is ReentrancyGuard, ERC20 {
         _update(balance0, balance1, _reserve0, _reserve1);
     }
 
-    function swap(uint256 _amount0Out, uint256 _amount1Out, address _to, bytes calldata _data) external nonReentrant {
+    function swap(uint256 _amount0Out, uint256 _amount1Out, address _to, bytes calldata /* _data */) external nonReentrant {
         require(_amount0Out > 0 || _amount1Out > 0, 'SWAP:INSUFFICIENT_OUTPUT_AMOUNT');
         (uint112 _reserve0, uint112 _reserve1,) = getReserves();
         require(_amount0Out < _reserve0 && _amount1Out < _reserve1, 'SWAP:INSUFFICIENT_LIQUIDITY');

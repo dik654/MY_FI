@@ -41,6 +41,13 @@ contract Vault is ReentrancyGuard {
         );
     }
 
+    function initialize(uint256 _flashLoanBP, uint256 _txFeeBP, uint256 _maxLimit, uint256 _crr) external onlyOwner {
+        _reserveData.totalData.flashLoanBP = _flashLoanBP;
+        _reserveData.totalData.txFeeBP = _txFeeBP;
+        _reserveData.totalData.maxLimit = _maxLimit;
+        _reserveData.totalData.cashReserveRatio = _crr;
+    }
+
     function getPrice(
         address _token, 
         bool _maximise
@@ -50,6 +57,49 @@ contract Vault is ReentrancyGuard {
             _token,
             _maximise
         );
+    }
+
+    function getTotalData() external view returns (uint256 flashLoanBP, uint256 txFeeBP, uint256 maxLimit, uint256 crr) {
+        flashLoanBP = _reserveData.totalData.flashLoanBP;
+        txFeeBP = _reserveData.totalData.txFeeBP;
+        maxLimit = _reserveData.totalData.maxLimit;
+        crr = _reserveData.totalData.cashReserveRatio;
+    }
+
+    function getPoolData(address _token) external view returns (uint256 tokenReserve, address depositTokenAddress, uint256 minProfitBasisPoints, uint256 feeReserves) {
+        tokenReserve = _reserveData.tokenReserve[_token];
+        depositTokenAddress = _reserveData.depositTokenAddress[_token];
+        minProfitBasisPoints = _reserveData.minProfitBasisPoints[_token];
+        feeReserves = _reserveData.feeReserves[_token];
+    }
+
+    function getLongTokenPositionData(address _token) external view returns (uint256 reservedAmounts, uint256 guaranteedUsd, uint256 cumulativeFundingRates, uint256 lastFundingTimes) {
+        reservedAmounts = _reserveData.tokenPositionData.reservedAmounts[_token][true];
+        guaranteedUsd = _reserveData.tokenPositionData.guaranteedUsd[_token][true];
+        cumulativeFundingRates = _reserveData.cumulativeFundingRates[_token][true];
+        lastFundingTimes = _reserveData.lastFundingTimes[_token][true];
+    }
+
+    function getShortTokenPositionData(address _token) external view returns (uint256 reservedAmounts, uint256 guaranteedUsd, uint256 cumulativeFundingRates, uint256 lastFundingTimes) {
+        reservedAmounts = _reserveData.tokenPositionData.reservedAmounts[_token][false];
+        guaranteedUsd = _reserveData.tokenPositionData.guaranteedUsd[_token][false];
+        cumulativeFundingRates = _reserveData.cumulativeFundingRates[_token][false];
+        lastFundingTimes = _reserveData.lastFundingTimes[_token][false];
+    }
+
+    function getPositionData(address _account,address _token, bool _isLong) external view returns (uint256 size, uint256 collateral, uint256 averagePrice, uint256 entryFundingRate, uint256 reserveAmount, int256 realisedPnl, uint256 lastIncreasedTime) {
+        bytes32 key = keccak256(abi.encodePacked(
+            _account,
+            _token,
+            _isLong
+        ));
+        size = _reserveData.positions[key].size;
+        collateral = _reserveData.positions[key].size;
+        averagePrice = _reserveData.positions[key].averagePrice;
+        entryFundingRate = _reserveData.positions[key].entryFundingRate;
+        reserveAmount = _reserveData.positions[key].reserveAmount;
+        realisedPnl = _reserveData.positions[key].realisedPnl;
+        lastIncreasedTime = _reserveData.positions[key].lastIncreasedTime;
     }
 
     // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= //
